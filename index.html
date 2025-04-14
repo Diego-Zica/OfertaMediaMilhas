@@ -69,6 +69,14 @@ border-radius: 5px;
 font-size: 11px;
 }
 
+.sales {
+margin-top: 20px;
+padding: 10px;
+background-color: #ecfff0;
+border-radius: 5px;
+font-size: 11px;
+}
+
 #resultDIV {
 padding-top: 7px;
 align-items: center;
@@ -94,7 +102,12 @@ align-items: center;
 </div>
 
 <div id="resultado" class="result"></div>
+
+<div id="quantVendas" class="sales"></div>
 </div>
+
+
+
 
 <script>
 function calcularCombinacoes() {
@@ -110,7 +123,7 @@ return;
 const regras = {
 Smiles: { currentCPF: 25, maxCPF: 25, limiteMediaMaxima: 90000, limiteMediaMinima: 10000 },
 Azul: { currentCPF: 4, maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
-Latam: { currentCPF: 9, maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
+Latam: { currentCPF: 10, maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
 };
 
 const regraAtual = regras[programa];
@@ -118,6 +131,7 @@ const combinacoes = [];
 
 if (regraAtual.currentCPF <= 0) {
 document.getElementById('resultado').innerText = 'Você não pode cadastrar oferta no momento, todas suas vendas permitidas já foram efetuadas!';
+document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
 return;
 }
 
@@ -146,11 +160,13 @@ Vendas, Média: ${combinacao.mediaArredondada}
 });
 
 document.getElementById('resultado').innerHTML = resultadoHTML;
+document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
 
 }
 else {
 document.getElementById('resultado').innerText =
 `Valor de milhas não permitido para venda. Você pode ofertar no máximo: ${regraAtual.currentCPF * regraAtual.limiteMediaMaxima} milhas.`;
+document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
 }
 }
 
