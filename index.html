@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto valem suas milhas?</title>
+<style>
+body {
+font-family: Verdana, sans-serif;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+background-color: #f9f9f9;
+}
+
+.container {
+text-align: center;
+background: #fff;
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+width: 90%;
+max-width: 700px;
+}
+
+h1 {
+font-size: 24px;
+margin-bottom: 10px;
+}
+
+p {
+font-size: 14px;
+color: #666;
+}
+
+.form-group {
+margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 10px;
+}
+
+select, input[type="number"], button {
+padding: 10px;
+border-radius: 5px;
+border: 1px solid #ccc;
+font-size: 16px;
+}
+
+button {
+background-color: #e91e63;
+color: white;
+border: none;
+cursor: pointer;
+}
+
+button:hover {
+background-color: #d81b60;
+}
+
+.result {
+margin-top: 20px;
+padding: 10px;
+background-color: #f1f1f1;
+border-radius: 5px;
+font-size: 11px;
+}
+
+#resultDIV {
+padding-top: 7px;
+align-items: center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Quanto valem suas milhas?</h1>
+<p>Escolha a forma de vender milhas que mais combina com você e aproveite essa oportunidade de ganhar dinheiro extra.</p>
+
+<div class="form-group">
+<select id="programa">
+<option value="" disabled selected>Programa de fidelidade</option>
+<option value="Smiles">Smiles</option>
+<option value="Azul">Azul</option>
+<option value="Latam">Latam</option>
+</select>
+
+<input type="number" id="quantidade" placeholder="Quantidade de milhas">
+
+<button onclick="calcularCombinacoes()">Cotar</button>
+</div>
+
+<div id="resultado" class="result"></div>
+</div>
+
+<script>
+function calcularCombinacoes() {
+const programa = document.getElementById('programa').value;
+const quantidadeMilhas = parseInt(document.getElementById('quantidade').value);
+
+if (!programa || isNaN(quantidadeMilhas) || quantidadeMilhas <= 0) {
+document.getElementById('resultado').innerText = 'Por favor, preencha todos os campos corretamente.';
+return;
+}
+
+// Regras por programa
+const regras = {
+Smiles: { currentCPF: 25, maxCPF: 25, limiteMediaMaxima: 90000, limiteMediaMinima: 10000 },
+Azul: { currentCPF: 4, maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
+Latam: { currentCPF: 9, maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
+};
+
+const regraAtual = regras[programa];
+const combinacoes = [];
+
+if (regraAtual.currentCPF <= 0) {
+document.getElementById('resultado').innerText = 'Você não pode cadastrar oferta no momento, todas suas vendas permitidas já foram efetuadas!';
+return;
+}
+
+// Gerar combinações válidas
+for (let cpf = regraAtual.currentCPF; cpf >= 1; cpf--) {
+const media = quantidadeMilhas / cpf;
+
+// Arredondar a média para números inteiros
+const mediaArredondada = Math.floor(media);
+
+// Verificar se a média atende aos limites mínimo e máximo
+if (mediaArredondada >= regraAtual.limiteMediaMinima && mediaArredondada <= regraAtual.limiteMediaMaxima) {
+combinacoes.push({ cpf, mediaArredondada });
+}
+}
+
+// Exibir resultado
+if (combinacoes.length > 0) {
+let resultadoHTML = `<strong>Combinações válidas:</strong><br>`;
+combinacoes.forEach((combinacao, index) => {
+resultadoHTML += `
+<div id="resultDIV"><label>
+<input type="radio" name="vendas" value="${combinacao.cpf}"> ${combinacao.cpf}
+Vendas, Média: ${combinacao.mediaArredondada}
+</label><br></div>`;
+});
+
+document.getElementById('resultado').innerHTML = resultadoHTML;
+
+}
+else {
+document.getElementById('resultado').innerText =
+`Valor de milhas não permitido para venda. Você pode ofertar no máximo: ${regraAtual.currentCPF * regraAtual.limiteMediaMaxima} milhas.`;
+}
+}
+</script>
+</body>
+</html>
