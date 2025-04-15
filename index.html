@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -60,6 +61,12 @@ cursor: pointer;
 button:hover {
 background-color: #d81b60;
 }
+.resultTittle {
+margin-top: 5px;
+padding: 10px;
+font-size: 14px;
+font-weight: 800;
+}
 
 .result {
 margin-top: 20px;
@@ -67,6 +74,7 @@ padding: 10px;
 background-color: #f1f1f1;
 border-radius: 5px;
 font-size: 11px;
+font-weight: 400;
 }
 
 .sales {
@@ -78,8 +86,14 @@ font-size: 11px;
 }
 
 #resultDIV {
-padding-top: 7px;
-align-items: center;
+margin-top: 3px;
+height: 25px;
+padding: 10px;
+border: solid 1px #c4c4c4;
+background-color: #fff;
+border-radius: 16px;
+
+
 }
 </style>
 </head>
@@ -101,7 +115,9 @@ align-items: center;
 <button onclick="calcularCombinacoes()">Cotar</button>
 </div>
 
-<div id="resultado" class="result"></div>
+<div id="resultadoTitulo" class="resultTittle">
+  <div id="resultado" class="result"></div>
+</div>
 
 <div id="quantVendas" class="sales"></div>
 </div>
@@ -150,13 +166,14 @@ combinacoes.push({ cpf, mediaArredondada });
 
 // Exibir resultado
 if (combinacoes.length > 0) {
-let resultadoHTML = `<strong>Combinações válidas:</strong><br>`;
+let resultadoHTML = `<div class="resultTittle">Combinações válidas:</div>`;
 combinacoes.forEach((combinacao, index) => {
 resultadoHTML += `
-<div id="resultDIV"><label>
-<input type="radio" name="vendas" value="${combinacao.cpf}"> ${combinacao.cpf}
-Vendas, Média: ${combinacao.mediaArredondada}
-</label><br></div>`;
+<div id="resultDIV">
+  <input type="radio" name="vendas" value="${combinacao.cpf}" /> 
+  <label class="resultLabel">${combinacao.cpf}
+Vendas, Média: ${combinacao.mediaArredondada}</label>
+</div>`;
 });
 
 document.getElementById('resultado').innerHTML = resultadoHTML;
