@@ -52,33 +52,35 @@ font-size: 16px;
 }
 
 button {
-background-color: #e91e63;
+background-color: #CC338A;
 color: white;
 border: none;
 cursor: pointer;
 }
 
 button:hover {
-background-color: #d81b60;
+background-color: #97DA82;
+color:#0F1A2A;
 }
+
 .resultTittle {
-margin-top: 5px;
-padding: 10px;
-font-size: 14px;
+margin-top: 7px;
+font-size: 12px;
 font-weight: 800;
+padding: 15px 13% 10px;
 }
 
 .result {
-margin-top: 20px;
-padding: 10px 70px 10px;
+margin: 20px 0 10px;
+padding: 10px 18% 10px;
 background-color: #f7f7f7;
-border-radius: 16px;
+border-radius: 10px;
 font-size: 11px;
 font-weight: 400;
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .sales {
-margin-top: 20px;
 padding: 10px;
 background-color: #ecfff0;
 border-radius: 5px;
@@ -86,15 +88,46 @@ font-size: 11px;
 }
 
 #resultDIV {
-margin-top: 3px;
-height: 25px;
+transition: transform 0.3s;
+margin-top: 5px;
+height: 20px;
 padding: 10px;
 border: solid 1px #dfdfdf;
 background-color: #fff;
-border-radius: 16px;
-
-
+border-radius: 10px;
+box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
+
+#resultDIV:hover {
+animation: pulso 0.8s infinite;
+margin-top: 5px;
+height: 20px;
+padding: 10px;
+border: solid 1px #dfdfdf;
+background-color: #CC338A;
+border-radius: 10px;
+box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+color:#fff;
+font-weight: 800;
+}
+
+#resultDIV::selection {
+margin-top: 5px;
+height: 20px;
+padding: 10px;
+border: solid 1px #dfdfdf;
+background-color: #CC338A;
+border-radius: 10px;
+box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+color:#fff;
+}
+
+@keyframes pulso {
+0% { transform: scale(1); }
+50% { transform: scale(1.1); }
+100% { transform: scale(1); }
+}
+
 </style>
 </head>
 <body>
@@ -138,7 +171,7 @@ return;
 // Regras por programa
 const regras = {
 Smiles: { currentCPF: 25, maxCPF: 25, limiteMediaMaxima: 90000, limiteMediaMinima: 10000 },
-Azul: { currentCPF: 4, maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
+Azul: { currentCPF: 7, maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
 Latam: { currentCPF: 10, maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
 };
 
@@ -147,7 +180,7 @@ const combinacoes = [];
 
 if (regraAtual.currentCPF <= 0) {
 document.getElementById('resultado').innerText = 'Você não pode cadastrar oferta no momento, todas suas vendas permitidas já foram efetuadas!';
-document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
+document.getElementById('quantVendas').innerText = `Quantidade de Vendas já realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
 return;
 }
 
@@ -166,13 +199,13 @@ combinacoes.push({ cpf, mediaArredondada });
 
 // Exibir resultado
 if (combinacoes.length > 0) {
-let resultadoHTML = `<div class="resultTittle">Combinações válidas:</div>`;
+let resultadoHTML = `<div class="resultTittle">Combo de vendas válidas:</div>`;
 combinacoes.forEach((combinacao, index) => {
 resultadoHTML += `
 <div id="resultDIV">
   <input type="radio" name="vendas" value="${combinacao.cpf}" /> 
-  <label class="resultLabel">${combinacao.cpf}
-Vendas, Média: ${combinacao.mediaArredondada}</label>
+  <label class="resultLabel"><strong>${combinacao.cpf}</strong>
+Vendas - [Média: <strong>${combinacao.mediaArredondada.toLocaleString('pt-BR')}</strong>]</label>
 </div>`;
 });
 
