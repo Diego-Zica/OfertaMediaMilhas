@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,13 +10,25 @@ font-family: Verdana, sans-serif;
 margin: 0;
 padding: 0;
 display: flex;
+flex-direction: column;
 justify-content: center;
 align-items: center;
 min-height: 100vh;
 background-color: #f9f9f9;
 }
 
-.container {
+.step1 {
+text-align: center;
+background: #fff;
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+width: 90%;
+max-width: 700px;
+margin-bottom: 30px;
+}
+
+.step2 {
 text-align: center;
 background: #fff;
 padding: 20px;
@@ -28,27 +39,41 @@ max-width: 700px;
 }
 
 h1 {
-font-size: 24px;
-margin-bottom: 10px;
+font-size: 22px;
+margin-bottom: 14px;
 }
 
-p {
-font-size: 14px;
+p, li {
+font-size: 12px;
 color: #666;
+text-align: left;
+padding-left: 15px;
+line-height: 1.8;
 }
 
-.form-group {
+.form-group1 {
 margin-top: 20px;
 display: flex;
 justify-content: center;
 gap: 10px;
 }
 
-select, input[type="number"], button {
+.form-group2 {
+margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 10px;
+}
+
+select, input[type="number"], input[type="text"], button {
 padding: 10px;
 border-radius: 5px;
 border: 1px solid #ccc;
-font-size: 16px;
+font-size: 13px;
+}
+
+#cpfdisponivel{
+  min-width: 85px;
 }
 
 button {
@@ -75,16 +100,9 @@ margin: 20px 0 10px;
 padding: 10px 18% 10px;
 background-color: #f7f7f7;
 border-radius: 10px;
-font-size: 11px;
-font-weight: 400;
+font-size: 12px;
+font-weight: 600;
 box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.sales {
-padding: 10px;
-background-color: #ecfff0;
-border-radius: 5px;
-font-size: 11px;
 }
 
 #resultDIV {
@@ -124,102 +142,134 @@ color:#fff;
 
 @keyframes pulso {
 0% { transform: scale(1); }
-50% { transform: scale(1.1); }
+50% { transform: scale(1.05); }
 100% { transform: scale(1); }
 }
 
 </style>
 </head>
 <body>
-<div class="container">
-<h1>Quanto valem suas milhas?</h1>
-<p>Escolha a forma de vender milhas que mais combina com você e aproveite essa oportunidade de ganhar dinheiro extra.</p>
+  <div class="step1">
+    <h1>Step 1 - Buscar a quantidade de CPFs disponíveis</h1>
+    <p>
+      <ol>
+        <li>Preencha abaixo o login e cia aérea e clique em "Buscar CPFs disponíveis".</li>
+        <li>Você será redirecionado para uma nova aba com informações sobre quantidades de CPFs desse cliente.</li>     
+      </ol>
+    </p>
+    <div class="form-group1">
+      <input type="text" id="login" placeholder="Login Ofertante">
+      <select id="programa">
+        <option value="" disabled selected>Companhia Aérea</option>
+        <option value="Gol">Gol</option>
+        <option value="Azul">Azul</option>
+        <option value="Latam">Latam</option>
+      </select>
+      <button onclick="buscarCpfs()">Buscar CPFs disponíveis</button>
+    </div>
+  </div>
 
-<div class="form-group">
-<select id="programa">
-<option value="" disabled selected>Programa de fidelidade</option>
-<option value="Smiles">Smiles</option>
-<option value="Azul">Azul</option>
-<option value="Latam">Latam</option>
-</select>
+  <div class="step2">
+    <h1>Step 2 - Cotar Combinação de Vendas Possíveis</h1>
+    <p>
+      <ol>
+        <li>Preencha a quantidade de milhas e os CPFs para venda e aperte o botão "Cotar".</li>
+        <li>Serão exibidas todas as combinações de vendas válidas para a quantidade de milhas e CPFs informados. (Caso a venda não seja possível, aparecerá uma mensagem de erro.)</li>
+        <li>Informe ao cliente as médias válidas ou o erro retornado pela cotação.</li>      
+    </ol>
+    </p>
+    <div class="form-group2">
+      <input type="number" id="quantidade" placeholder="Quantidade de milhas" step="1000">
+      <input type="number" id="cpfdisponivel" placeholder="Nº de CPFs" min="1" max="25" step="1">
+      <button onclick="calcularCombinacoes()">Cotar</button>
+    </div>
+    <div id="resultadoTitulo" class="resultTittle"></div>
+    <div id="resultado" class="result"></div>
+  </div>
 
-<input type="number" id="quantidade" placeholder="Quantidade de milhas" step="1000">
+  <script>
+    function buscarCpfs() {
+      const login = document.getElementById('login').value;
+      const programa = document.getElementById('programa').value;
 
-<button onclick="calcularCombinacoes()">Cotar</button>
-</div>
+      // Validação de Preenchimento de Campos Step 1
+      if (!login) {
+        document.getElementById('resultado').innerText = 'Por favor, preencha o campo "Login Ofertante".';
+        return;
+      }
+      if (!programa) {
+        document.getElementById('resultado').innerText = 'Por favor, preencha o campo "Companhia Aérea".';
+        return;
+      }
 
-<div id="resultadoTitulo" class="resultTittle">
-  <div id="resultado" class="result"></div>
-</div>
+      const url = `https://bi.maxmilhas.com.br/question/10733-oft-quantidade-de-cpfs-por-login-e-cia?login=${encodeURIComponent(login)}&cia=${encodeURIComponent(programa)}`;
+      window.open(url, '_blank');
+    }
 
-<div id="quantVendas" class="sales"></div>
-</div>
+    function calcularCombinacoes() {
+      const programa = document.getElementById('programa').value;
+      const quantidadeMilhas = parseInt(document.getElementById('quantidade').value);
+      const cpfdisponivel = document.getElementById('cpfdisponivel').value;
 
+      // Validação de Preenchimento de Campos Step 2
+      if (!programa) {
+        document.getElementById('resultado').innerText = 'Por favor, preencha o campo "Companhia Aérea".';
+        return;
+      }
+      if (isNaN(quantidadeMilhas) || quantidadeMilhas <= 0) {
+        document.getElementById('resultado').innerText = 'Por favor, preencha o campo "Quantidade de Milhas".';
+        return;
+      }
+      if (!cpfdisponivel) {
+        document.getElementById('resultado').innerText = 'Por favor, preencha o campo "Nº de CPFs".';
+        return;
+      }
 
+      // Regras por programa
+      const regras = {
+        Gol: { maxCPF: 25, limiteMediaMaxima: 90000, limiteMediaMinima: 10000 },
+        Azul: { maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
+        Latam: { maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
+      };
 
+      const regraAtual = regras[programa];
+      const combinacoes = [];
 
-<script>
-function calcularCombinacoes() {
-const programa = document.getElementById('programa').value;
-const quantidadeMilhas = parseInt(document.getElementById('quantidade').value);
+      // Gerar combinações válidas
+      for (let cpf = cpfdisponivel; cpf >= 1; cpf--) {
+        const media = quantidadeMilhas / cpf;
+        // Arredondar a média para números inteiros
+        const mediaArredondada = Math.floor(media);
 
-if (!programa || isNaN(quantidadeMilhas) || quantidadeMilhas <= 0) {
-document.getElementById('resultado').innerText = 'Por favor, preencha todos os campos corretamente.';
-return;
-}
+        // Verificar se a média atende aos limites mínimo e máximo
+        if (
+          mediaArredondada >= regraAtual.limiteMediaMinima &&
+          mediaArredondada <= regraAtual.limiteMediaMaxima
+        ) {
+          combinacoes.push({ cpf, mediaArredondada });
+        }
+      }
 
-// Regras por programa
-const regras = {
-Smiles: { currentCPF: 25, maxCPF: 25, limiteMediaMaxima: 90000, limiteMediaMinima: 10000 },
-Azul: { currentCPF: 7, maxCPF: 8, limiteMediaMaxima: 60000, limiteMediaMinima: 6000 },
-Latam: { currentCPF: 10, maxCPF: 24, limiteMediaMaxima: 30000, limiteMediaMinima: 3500 }
-};
+      // Exibir resultado
+      if (combinacoes.length > 0) {
+        let resultadoHTML = `<div class="resultTittle">Combo de vendas válidas:</div>`;
+        combinacoes.forEach((combinacao) => {
+          resultadoHTML += `
+            <div id="resultDIV">
+              <label class="resultLabel">
+                <strong>${combinacao.cpf}</strong>
+                Vendas - [Média: <strong>${combinacao.mediaArredondada.toLocaleString('pt-BR')}</strong>]
+              </label>
+            </div>`;
+        });
 
-const regraAtual = regras[programa];
-const combinacoes = [];
-
-if (regraAtual.currentCPF <= 0) {
-document.getElementById('resultado').innerText = 'Você não pode cadastrar oferta no momento, todas suas vendas permitidas já foram efetuadas!';
-document.getElementById('quantVendas').innerText = `Quantidade de Vendas já realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
-return;
-}
-
-// Gerar combinações válidas
-for (let cpf = regraAtual.currentCPF; cpf >= 1; cpf--) {
-const media = quantidadeMilhas / cpf;
-
-// Arredondar a média para números inteiros
-const mediaArredondada = Math.floor(media);
-
-// Verificar se a média atende aos limites mínimo e máximo
-if (mediaArredondada >= regraAtual.limiteMediaMinima && mediaArredondada <= regraAtual.limiteMediaMaxima) {
-combinacoes.push({ cpf, mediaArredondada });
-}
-}
-
-// Exibir resultado
-if (combinacoes.length > 0) {
-let resultadoHTML = `<div class="resultTittle">Combo de vendas válidas:</div>`;
-combinacoes.forEach((combinacao, index) => {
-resultadoHTML += `
-<div id="resultDIV">
-  <input type="radio" name="vendas" value="${combinacao.cpf}" /> 
-  <label class="resultLabel"><strong>${combinacao.cpf}</strong>
-Vendas - [Média: <strong>${combinacao.mediaArredondada.toLocaleString('pt-BR')}</strong>]</label>
-</div>`;
-});
-
-document.getElementById('resultado').innerHTML = resultadoHTML;
-document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
-
-}
-else {
-document.getElementById('resultado').innerText =
-`Valor de milhas não permitido para venda. Você pode ofertar no máximo: ${regraAtual.currentCPF * regraAtual.limiteMediaMaxima} milhas.`;
-document.getElementById('quantVendas').innerText = `Quantidade de Vendas realizadas: ${regraAtual.maxCPF - regraAtual.currentCPF}/${regraAtual.maxCPF}.`;
-}
-}
-
-</script>
+        document.getElementById('resultado').innerHTML = resultadoHTML;
+      } else {
+        document.getElementById('resultado').innerText =
+          `Valor de milhas não permitido para venda! Quantidade de milhas válida: ${regraAtual.limiteMediaMinima} a ${cpfdisponivel * regraAtual.limiteMediaMaxima} milhas.`;
+      }
+    }
+  </script>
 </body>
+
 </html>
